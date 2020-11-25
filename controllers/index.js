@@ -2,6 +2,7 @@ const express = require('express');
 const router = express.Router();
 // import all user routes
 const userRoutes = require('./userController');
+const keebRoutes = require('./keebController');
 
 router.get("/", (req, res) => {
     res.send("My Keebs")
@@ -9,5 +10,6 @@ router.get("/", (req, res) => {
 
 // use all user routes
 router.use("/api/users", userRoutes);
+router.use("/api/keebs", keebRoutes);
 
 module.exports = router;

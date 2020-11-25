@@ -1,7 +1,7 @@
 module.exports = function (sequelize, DataTypes) {
     var Keebs = sequelize.define('Keebs', {
         name: DataTypes.STRING,
-        size: DataTypes.STRING,
+        size: DataTypes.INTEGER,
         maker: DataTypes.STRING,
         case: DataTypes.STRING,
         color: DataTypes.STRING,

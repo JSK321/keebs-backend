@@ -67,13 +67,23 @@ router.post("/login", (req, res) => {
     })
 })
 
-router.get("/secrets", (req, res) => {
+router.get("/secretProfile", (req, res) => {
     const loggedInUser = checkAuthStatus(req);
     console.log(loggedInUser)
-    if(!loggedInUser){
+    if (!loggedInUser) {
         return res.status(401).send("invalid token")
     }
-    res.status(200).send("valid token")
+    db.User.findOne({
+        where: {
+            id: loggedInUser.id
+        },
+        include: [db.Keebs]
+    }).then(dbUser=> {
+        res.json(dbUser)
+    }).catch(err => {
+        console.log(err)
+        res.status(500).send("an error has occured, plesase try again");
+    })
 })
 
 module.exports = router;
