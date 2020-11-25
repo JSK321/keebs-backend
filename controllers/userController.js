@@ -4,6 +4,24 @@ const db = require('../models');
 const bcrypt = require('bcrypt');
 const jwt = require('jsonwebtoken');
 
+const checkAuthStatus = request => {
+    if (!request.headers.authorization) {
+        return false
+    }
+    // splits the Bearer token into an array, get token by getting index of 1
+    const token = request.headers.authorization.split(" ")[1]
+
+    const loggedInUser = jwt.verify(token, 'secretString', (err, data) => {
+        if (err) {
+            return false
+        } else {
+            return data
+        }
+    });
+    console.log(loggedInUser)
+    return loggedInUser
+}
+
 router.get("/", (req, res) => {
     db.User.findAll().then(dbUsers => {
         res.json(dbUsers)
@@ -26,27 +44,36 @@ router.post("/", (req, res) => {
     })
 })
 
-router.post("/login", (req,res) => {
+router.post("/login", (req, res) => {
     db.User.findOne({
         where: {
             email: req.body.email,
         }
     }).then(foundUser => {
-        if(!foundUser){
+        if (!foundUser) {
             return res.status(404).send("User not found")
         }
-        if(bcrypt.compareSync(req.body.password, foundUser.password)) {
+        if (bcrypt.compareSync(req.body.password, foundUser.password)) {
             const userTokenInfo = {
                 email: foundUser.email,
                 id: foundUser.id,
                 name: foundUser.name
             }
-            const token = jwt.sign(userTokenInfo, "secretString", {expiresIn:"2h"})
-            return res.status(200).json({token:token})
+            const token = jwt.sign(userTokenInfo, "secretString", { expiresIn: "2h" })
+            return res.status(200).json({ token: token })
         } else {
             return res.status(403).send("incorrect password")
         }
     })
+})
+
+router.get("/secrets", (req, res) => {
+    const loggedInUser = checkAuthStatus(req);
+    console.log(loggedInUser)
+    if(!loggedInUser){
+        return res.status(401).send("invalid token")
+    }
+    res.status(200).send("valid token")
 })
 
 module.exports = router;
