@@ -1,0 +1,28 @@
+const { sequelize } = require("../models")
+
+module.exports = function (sequelize, DataTypes) {
+    var Parts = sequelize.define('Parts', {
+        switches: DataTypes.STRING,
+        springWeight: DataTypes.INTEGER,
+        switchLube: {
+            type: DataTypes.STRING,
+            allowNull: true,
+        },
+        switchFilm: {
+            type: DataTypes.STRING,
+            allowNull: true,
+        },
+        stabs: DataTypes.STRING,
+        stabLube: {
+            type: DataTypes.STRING,
+            allowNull: true,
+        },
+        keyset: DataTypes.STRING
+    })
+  
+    Parts.associate = function(models){
+        Parts.belongsTo(models.Keebs)
+    };
+
+    return Parts;
+};
