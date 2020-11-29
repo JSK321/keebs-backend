@@ -22,10 +22,8 @@ const checkAuthStatus = request => {
 }
 
 router.get("/", (req, res) => {
-    db.Keebs.findAll({
-        include:[db.Parts]
-    }).then(keebs => {
-        res.json(keebs)
+    db.Part.findAll().then(parts => {
+        res.json(parts)
     }).catch(err => {
         console.log(err)
         res.status(500).send("Unable to find keebs")
@@ -33,13 +31,12 @@ router.get("/", (req, res) => {
 });
 
 router.get("/:id", (req, res) => {
-    db.Keebs.findOne({
+    db.Part.findOne({
         where: {
             id: req.params.id
-        },
-        include:[db.Parts]
-    }).then(dbKeeb => {
-        res.json(dbKeeb)
+        }
+    }).then(dbPart => {
+        res.json(dbPart)
     }).catch(err => {
         console.log(err)
         res.status(500).send("Unable to find keebs")
@@ -51,14 +48,16 @@ router.post("/", (req, res) => {
     if (!loggedInUser) {
         return res.status(401).send("Please login first,")
     }
-    db.Keebs.create({
-        name: req.body.name,
-        size: req.body.size,
-        maker: req.body.maker,
-        case: req.body.case,
-        color: req.body.color,
-        plate: req.body.plate,
-        UserId: loggedInUser.id
+    db.Parts.create({
+        switches: req.body.switches,
+        springWeight: req.body.springWeight,
+        switchLube: req.body.switchLube,
+        switchFilm: req.body.switchFilm,
+        stabs: req.body.stabs,
+        stabLube: req.body.stabLube,
+        keyset: req.body.keyset,
+        UserId: loggedInUser.id,
+        KeebId: req.body.KeebId
     }).then(newKeeb => {
         res.json(newKeeb)
     }).catch(err => {
@@ -72,19 +71,21 @@ router.put("/:id", (req, res) => {
     if (!loggedInUser) {
         return res.status(401).send("Please login first,")
     }
-    db.Keebs.findOne({
+    db.Parts.findOne({
         where: {
             id: req.params.id
         }
     }).then(keeb=> {
         if(loggedInUser.id === keeb.UserId){
-            db.Keebs.update({
-                name: req.body.name,
-                size: req.body.size,
-                maker: req.body.maker,
-                case: req.body.case,
-                color: req.body.color,
-                plate: req.body.plate
+            db.Parts.update({
+                switches: req.body.switches,
+                springWeight: req.body.springWeight,
+                switchLube: req.body.switchLube,
+                switchFilm: req.body.switchFilm,
+                stabs: req.body.stabs,
+                stabLube: req.body.stabLube,
+                keyset: req.body.keyset,
+                KeebId: req.body.KeebId
             },
             {
                 where: {
@@ -107,18 +108,18 @@ router.delete("/:id", (req, res) => {
     if (!loggedInUser) {
         return res.status(401).send("Please login first,")
     }
-    db.Keebs.findOne({
+    db.Parts.findOne({
         where: {
             id: req.params.id
         }
-    }).then(keeb=> {
-        if(loggedInUser.id === keeb.UserId){
-            db.Keebs.destroy({
+    }).then(part => {
+        if(loggedInUser.id === part.UserId){
+            db.Part.destroy({
                 where: {
-                    id: keeb.id
+                    id: part.id
                 }
-            }).then(delKeeb=> {
-                res.json(delKeeb)
+            }).then(delPart=> {
+                res.json(delPart)
             }).catch(err => {
                 console.log(err)
                 res.status(500).send("Unable to find keeb")

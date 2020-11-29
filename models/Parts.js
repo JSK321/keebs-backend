@@ -22,6 +22,7 @@ module.exports = function (sequelize, DataTypes) {
   
     Parts.associate = function(models){
         Parts.belongsTo(models.Keebs)
+        Parts.belongsTo(models.User)
     };
 
     return Parts;
