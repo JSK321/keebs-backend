@@ -1,4 +1,6 @@
 const express = require('express');
+// have access to all my enviroment variables
+require("dotenv").config();
 
 // Sets up the Express App
 // ================================================

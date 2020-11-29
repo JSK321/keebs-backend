@@ -11,7 +11,7 @@ const checkAuthStatus = request => {
     // splits the Bearer token into an array, get token by getting index of 1
     const token = request.headers.authorization.split(" ")[1]
 
-    const loggedInUser = jwt.verify(token, 'secretString', (err, data) => {
+    const loggedInUser = jwt.verify(token, process.env.JWT_SECRET, (err, data) => {
         if (err) {
             return false
         } else {
@@ -59,7 +59,7 @@ router.post("/login", (req, res) => {
                 id: foundUser.id,
                 name: foundUser.name
             }
-            const token = jwt.sign(userTokenInfo, "secretString", { expiresIn: "2h" })
+            const token = jwt.sign(userTokenInfo, process.env.JWT_SECRET, { expiresIn: "2h" })
             return res.status(200).json({ token: token })
         } else {
             return res.status(403).send("incorrect password")
