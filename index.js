@@ -1,13 +1,13 @@
-const express = require('express');
+var express = require('express');
 // have access to all my enviroment variables
 require("dotenv").config();
 
 // Sets up the Express App
 // ================================================
-const app = express();
-const PORT = process.env.PORT || 8080;
-const cors = require('cors')
-const allRoutes = require('./controllers');
+var app = express();
+var PORT = process.env.PORT || 8080;
+var cors = require('cors')
+var allRoutes = require('./controllers');
 
 // Requiring our models for syncing
 const db = require('./models');
