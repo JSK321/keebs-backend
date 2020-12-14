@@ -6,6 +6,10 @@ module.exports = function (sequelize, DataTypes) {
         case: DataTypes.STRING,
         color: DataTypes.STRING,
         plate: DataTypes.STRING,
+        keebImage: {
+            type: DataTypes.STRING,
+            allowNull:true,
+        }
     });
 
     Keebs.associate = function (models) {

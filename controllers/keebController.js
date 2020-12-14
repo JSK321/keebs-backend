@@ -2,6 +2,7 @@ const express = require('express');
 const router = express.Router();
 const db = require('../models');
 const jwt = require('jsonwebtoken');
+const { cloudinary } = require('../utils/cloudinary');
 
 const checkAuthStatus = request => {
     if (!request.headers.authorization) {
@@ -58,6 +59,7 @@ router.post("/", (req, res) => {
         case: req.body.case,
         color: req.body.color,
         plate: req.body.plate,
+        keebImage: req.body.keebImage,
         UserId: loggedInUser.id
     }).then(newKeeb => {
         res.json(newKeeb)
@@ -84,7 +86,8 @@ router.put("/:id", (req, res) => {
                 maker: req.body.maker,
                 case: req.body.case,
                 color: req.body.color,
-                plate: req.body.plate
+                plate: req.body.plate,
+                keebImage: req.body.keebImage
             },
             {
                 where: {
@@ -100,6 +103,20 @@ router.put("/:id", (req, res) => {
             return res.status(401).send("Not your keeb!")
         }
     })
+})
+
+router.post('/upload', async (req, res) => {
+    try {
+        const fileStr = req.body.data
+        const uploadedImage = await cloudinary.uploader.upload(fileStr, {
+            upload_preset: 'keebs_setups'
+        })
+        console.log(uploadedImage)
+        res.json({ msg: "HURRAY!" })
+    } catch (error) {
+        console.log(error)
+        res.status(500).json({ err: 'Something went wrong' })
+    }
 })
 
 router.delete("/:id", (req, res) => {

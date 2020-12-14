@@ -3,6 +3,7 @@ const router = express.Router();
 const db = require('../models');
 const bcrypt = require('bcrypt');
 const jwt = require('jsonwebtoken');
+const { cloudinary } = require('../utils/cloudinary');
 
 const checkAuthStatus = request => {
     if (!request.headers.authorization) {
@@ -30,6 +31,16 @@ router.get("/", (req, res) => {
         res.status(500).end()
     })
 });
+
+router.get('/images', async (req, res) => {
+    const { resources } = await cloudinary.search
+        .expression('folder:keebs_setups')
+        .sort_by('public_id', 'desc')
+        .max_results(20)
+        .execute()
+    const publicIds = resources.map((file) => file.public_id)
+    res.send(publicIds)
+})
 
 router.post("/", (req, res) => {
     db.User.create({

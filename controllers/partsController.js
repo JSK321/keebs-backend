@@ -22,7 +22,7 @@ const checkAuthStatus = request => {
 }
 
 router.get("/", (req, res) => {
-    db.Part.findAll().then(parts => {
+    db.Parts.findAll().then(parts => {
         res.json(parts)
     }).catch(err => {
         console.log(err)
@@ -31,7 +31,7 @@ router.get("/", (req, res) => {
 });
 
 router.get("/:id", (req, res) => {
-    db.Part.findOne({
+    db.Parts.findOne({
         where: {
             id: req.params.id
         }
@@ -51,6 +51,7 @@ router.post("/", (req, res) => {
     db.Parts.create({
         switches: req.body.switches,
         springWeight: req.body.springWeight,
+        springLube: req.body.springLube,
         switchLube: req.body.switchLube,
         switchFilm: req.body.switchFilm,
         stabs: req.body.stabs,
@@ -75,11 +76,12 @@ router.put("/:id", (req, res) => {
         where: {
             id: req.params.id
         }
-    }).then(keeb=> {
-        if(loggedInUser.id === keeb.UserId){
+    }).then(keeb => {
+        if (loggedInUser.id === keeb.UserId) {
             db.Parts.update({
                 switches: req.body.switches,
                 springWeight: req.body.springWeight,
+                springLube: req.body.springLube,
                 switchLube: req.body.switchLube,
                 switchFilm: req.body.switchFilm,
                 stabs: req.body.stabs,
@@ -87,16 +89,16 @@ router.put("/:id", (req, res) => {
                 keyset: req.body.keyset,
                 KeebId: req.body.KeebId
             },
-            {
-                where: {
-                    id: keeb.id
-                }
-            }).then(editKeeb=> {
-                res.json(editKeeb)
-            }).catch(err => {
-                console.log(err)
-                res.status(500).send("Unable to find keeb")
-            })
+                {
+                    where: {
+                        id: keeb.id
+                    }
+                }).then(editKeeb => {
+                    res.json(editKeeb)
+                }).catch(err => {
+                    console.log(err)
+                    res.status(500).send("Unable to find keeb")
+                })
         } else {
             return res.status(401).send("Not your keeb!")
         }
@@ -113,12 +115,12 @@ router.delete("/:id", (req, res) => {
             id: req.params.id
         }
     }).then(part => {
-        if(loggedInUser.id === part.UserId){
-            db.Part.destroy({
+        if (loggedInUser.id === part.UserId) {
+            db.Parts.destroy({
                 where: {
                     id: part.id
                 }
-            }).then(delPart=> {
+            }).then(delPart => {
                 res.json(delPart)
             }).catch(err => {
                 console.log(err)

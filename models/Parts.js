@@ -3,7 +3,11 @@ const { sequelize } = require("../models")
 module.exports = function (sequelize, DataTypes) {
     var Parts = sequelize.define('Parts', {
         switches: DataTypes.STRING,
-        springWeight: DataTypes.INTEGER,
+        springWeight: DataTypes.STRING,
+        springLube: {
+            type: DataTypes.STRING,
+            allowNull:true,
+        },
         switchLube: {
             type: DataTypes.STRING,
             allowNull: true,
@@ -17,7 +21,7 @@ module.exports = function (sequelize, DataTypes) {
             type: DataTypes.STRING,
             allowNull: true,
         },
-        keyset: DataTypes.STRING
+        keyset: DataTypes.STRING,
     })
   
     Parts.associate = function(models){
