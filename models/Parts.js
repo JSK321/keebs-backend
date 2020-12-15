@@ -21,7 +21,10 @@ module.exports = function (sequelize, DataTypes) {
             type: DataTypes.STRING,
             allowNull: true,
         },
-        keyset: DataTypes.STRING,
+        keyset: {
+            type: DataTypes.STRING,
+            allowNull: true,
+        }
     })
   
     Parts.associate = function(models){
