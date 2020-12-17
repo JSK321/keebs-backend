@@ -78,6 +78,25 @@ router.post("/login", (req, res) => {
     })
 })
 
+router.delete("/:id", (req, res) => {
+    db.User.findOne({
+        where: {
+            id:req.params.id
+        }
+    }).then(user => {
+        db.User.destroy({
+            where: {
+                id: user.id
+            }
+        }).then(userDelete => {
+            res.json(userDelete)
+        }).catch(err => {
+            console.log(err)
+            res.status(500).send("Unable to find user")
+        })
+    })
+})
+
 router.get("/secretProfile", (req, res) => {
     const loggedInUser = checkAuthStatus(req);
     console.log(loggedInUser)
