@@ -96,7 +96,7 @@ router.get("/secretProfile", (req, res) => {
         res.json(dbUser)
     }).catch(err => {
         console.log(err)
-        res.status(500).send("an error has occured, plesase try again");
+        res.status(500).send(err);
     })
 })
 
