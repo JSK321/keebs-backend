@@ -58,6 +58,7 @@ router.post("/", (req, res) => {
         maker: req.body.maker,
         case: req.body.case,
         color: req.body.color,
+        angle: req.body.angle,
         plate: req.body.plate,
         keebImage: req.body.keebImage,
         UserId: loggedInUser.id
@@ -87,6 +88,7 @@ router.put("/:id", (req, res) => {
                 case: req.body.case,
                 color: req.body.color,
                 plate: req.body.plate,
+                angle: req.body.angle,
                 keebImage: req.body.keebImage
             },
             {

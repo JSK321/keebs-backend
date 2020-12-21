@@ -5,6 +5,7 @@ module.exports = function (sequelize, DataTypes) {
         maker: DataTypes.STRING,
         case: DataTypes.STRING,
         color: DataTypes.STRING,
+        angle: DataTypes.STRING,
         plate: DataTypes.STRING,
         keebImage: {
             type: DataTypes.STRING,
