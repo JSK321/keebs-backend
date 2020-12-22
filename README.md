@@ -1,4 +1,4 @@
-# keebs-backend
+# Keebs-backend
 
 [![GPLv3 license](https://img.shields.io/badge/License-MIT-blue.svg)](http://perso.crans.org/besson/LICENSE.html)
 
