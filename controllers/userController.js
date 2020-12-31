@@ -3,7 +3,6 @@ const router = express.Router();
 const db = require('../models');
 const bcrypt = require('bcrypt');
 const jwt = require('jsonwebtoken');
-const { cloudinary } = require('../utils/cloudinary');
 
 const checkAuthStatus = request => {
     if (!request.headers.authorization) {
@@ -32,14 +31,18 @@ router.get("/", (req, res) => {
     })
 });
 
-router.get('/images', async (req, res) => {
-    const { resources } = await cloudinary.search
-        .expression('folder:keebs_setups')
-        .sort_by('public_id', 'desc')
-        .max_results(20)
-        .execute()
-    const publicIds = resources.map((file) => file.public_id)
-    res.send(publicIds)
+router.post('/upload', async (req, res) => {
+    try {
+        const fileStr = req.body.data
+        const uploadedImage = await cloudinary.uploader.upload(fileStr, {
+            upload_preset: 'keebs_setups'
+        })
+        console.log(uploadedImage)
+        res.json({ msg: "HURRAY!" })
+    } catch (error) {
+        console.log(error)
+        res.status(500).json({ err: 'Something went wrong' })
+    }
 })
 
 router.post("/", (req, res) => {
@@ -78,10 +81,43 @@ router.post("/login", (req, res) => {
     })
 })
 
+router.put("/:id", (req, res) => {
+    const loggedInUser = checkAuthStatus(req);
+    if (!loggedInUser) {
+        return res.status(401).send("Please login first,")
+    }
+    db.User.findOne({
+        where: {
+            id: req.params.id
+        }
+    }).then(user => {
+        if (loggedInUser.id === user.id) {
+            db.User.update({
+                name: req.body.name,
+                email: req.body.email,
+                password: req.body.password,
+                profileImage: req.body.profileImage
+            },
+                {
+                    where: {
+                        id: user.id
+                    }
+                }).then(editUser => {
+                    res.json(editUser)
+                }).catch(err => {
+                    console.log(err)
+                    res.status(500).send("Unable to find profile")
+                })
+        } else {
+            return res.status(401).send("Not your profile!")
+        }
+    })
+})
+
 router.delete("/:id", (req, res) => {
     db.User.findOne({
         where: {
-            id:req.params.id
+            id: req.params.id
         }
     }).then(user => {
         db.User.destroy({
@@ -109,9 +145,9 @@ router.get("/secretProfile", (req, res) => {
         },
         include: [{
             model: db.Keebs,
-            include:[db.Parts]
+            include: [db.Parts]
         }]
-    }).then(dbUser=> {
+    }).then(dbUser => {
         res.json(dbUser)
     }).catch(err => {
         console.log(err)

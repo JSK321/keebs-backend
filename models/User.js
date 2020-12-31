@@ -13,6 +13,10 @@ module.exports = function (sequelize, DataTypes) {
         email: {
             type: DataTypes.STRING,
             unique: true
+        },
+        profileImage: {
+            type: DataTypes.STRING,
+            allowNull:true,
         }
     });
 
@@ -22,6 +26,10 @@ module.exports = function (sequelize, DataTypes) {
 
     User.beforeCreate(function (user) {
         user.password = bcrypt.hashSync(user.password, bcrypt.genSaltSync(10), null);
+    })
+
+    User.beforeBulkUpdate(function (user) {
+        user.attributes.password = bcrypt.hashSync(user.attributes.password, bcrypt.genSaltSync(10), null);
     })
 
     return User;
