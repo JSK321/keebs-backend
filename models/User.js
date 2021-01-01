@@ -16,7 +16,7 @@ module.exports = function (sequelize, DataTypes) {
         },
         profileImage: {
             type: DataTypes.STRING,
-            allowNull:true,
+            allowNull: true,
         }
     });
 
@@ -29,7 +29,9 @@ module.exports = function (sequelize, DataTypes) {
     })
 
     User.beforeBulkUpdate(function (user) {
-        user.attributes.password = bcrypt.hashSync(user.attributes.password, bcrypt.genSaltSync(10), null);
+        if (user.attributes.password !== "" && user.attributes.password !== undefined && user.attributes.password !== null) {
+            user.attributes.password = bcrypt.hashSync(user.attributes.password, bcrypt.genSaltSync(10), null);
+        }
     })
 
     return User;

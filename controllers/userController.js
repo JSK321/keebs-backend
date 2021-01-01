@@ -115,21 +115,29 @@ router.put("/:id", (req, res) => {
 })
 
 router.delete("/:id", (req, res) => {
+    const loggedInUser = checkAuthStatus(req);
+    if (!loggedInUser) {
+        return res.status(401).send("Please login first,")
+    }
     db.User.findOne({
         where: {
             id: req.params.id
         }
     }).then(user => {
-        db.User.destroy({
-            where: {
-                id: user.id
-            }
-        }).then(userDelete => {
-            res.json(userDelete)
-        }).catch(err => {
-            console.log(err)
-            res.status(500).send("Unable to find user")
-        })
+        if (loggedInUser.id === user.id) {
+            db.User.destroy({
+                where: {
+                    id: user.id
+                }
+            }).then(userDelete => {
+                res.json(userDelete)
+            }).catch(err => {
+                console.log(err)
+                res.status(500).send("Unable to find user")
+            })
+        } else {
+            return res.status(401).send("Not your profile!")
+        }
     })
 })
 
