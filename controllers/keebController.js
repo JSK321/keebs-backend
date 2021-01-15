@@ -2,7 +2,6 @@ const express = require('express');
 const router = express.Router();
 const db = require('../models');
 const jwt = require('jsonwebtoken');
-const { cloudinary } = require('../utils/cloudinary');
 
 const checkAuthStatus = request => {
     if (!request.headers.authorization) {

@@ -22,24 +22,24 @@ const checkAuthStatus = request => {
 }
 
 router.get("/", (req, res) => {
-    db.Parts.findAll().then(parts => {
-        res.json(parts)
+    db.Extras.findAll().then(data => {
+        res.json(data)
     }).catch(err => {
         console.log(err)
-        res.status(500).send("Unable to find keebs")
+        res.status(500).send("Unable to find Extras")
     })
 });
 
 router.get("/:id", (req, res) => {
-    db.Parts.findOne({
+    db.Extras.findOne({
         where: {
             id: req.params.id
-        }
-    }).then(dbPart => {
-        res.json(dbPart)
+        },
+    }).then(keysetData => {
+        res.json(keysetData)
     }).catch(err => {
         console.log(err)
-        res.status(500).send("Unable to find keebs")
+        res.status(500).send("Unable to find keyset")
     })
 })
 
@@ -48,59 +48,53 @@ router.post("/", (req, res) => {
     if (!loggedInUser) {
         return res.status(401).send("Please log in first")
     }
-    db.Parts.create({
-        switches: req.body.switches,
-        springWeight: req.body.springWeight,
-        springLube: req.body.springLube,
-        switchLube: req.body.switchLube,
-        switchFilm: req.body.switchFilm,
-        stabs: req.body.stabs,
-        stabLube: req.body.stabLube,
+    db.Extras.create({
         keyset: req.body.keyset,
-        UserId: loggedInUser.id,
-        KeebId: req.body.KeebId
-    }).then(newKeeb => {
-        res.json(newKeeb)
+        kits: req.body.kits,
+        material: req.body.material,
+        type: req.body.type,
+        profile: req.body.profile,
+        keysetImage: req.body.keysetImage,
+        UserId: loggedInUser.id
+    }).then(newExtras => {
+        res.json(newExtras)
     }).catch(err => {
         console.log(err)
-        res.status(500).send("Unable to create keebs")
+        res.status(500).send("Unable to create extra keysets")
     })
-});
+})
 
 router.put("/:id", (req, res) => {
     const loggedInUser = checkAuthStatus(req);
     if (!loggedInUser) {
         return res.status(401).send("Please login first,")
     }
-    db.Parts.findOne({
+    db.Extras.findOne({
         where: {
             id: req.params.id
         }
-    }).then(keeb => {
-        if (loggedInUser.id === keeb.UserId) {
-            db.Parts.update({
-                switches: req.body.switches,
-                springWeight: req.body.springWeight,
-                springLube: req.body.springLube,
-                switchLube: req.body.switchLube,
-                switchFilm: req.body.switchFilm,
-                stabs: req.body.stabs,
-                stabLube: req.body.stabLube,
+    }).then(keyset => {
+        if (loggedInUser.id === keyset.UserId) {
+            db.Extras.update({
                 keyset: req.body.keyset,
-                KeebId: req.body.KeebId
+                kits: req.body.kits,
+                material: req.body.material,
+                type: req.body.type,
+                profile: req.body.profile,
+                keysetImage: req.body.keysetImage
             },
                 {
                     where: {
-                        id: keeb.id
+                        id: keyset.id
                     }
-                }).then(editKeeb => {
-                    res.json(editKeeb)
+                }).then(editKeyset => {
+                    res.json(editKeyset)
                 }).catch(err => {
                     console.log(err)
-                    res.status(500).send("Unable to find keeb")
+                    res.status(500).send("Unable to find keyset")
                 })
         } else {
-            return res.status(401).send("Not your keeb!")
+            return res.status(401).send("Not your keyset!")
         }
     })
 })
@@ -110,26 +104,25 @@ router.delete("/:id", (req, res) => {
     if (!loggedInUser) {
         return res.status(401).send("Please login first,")
     }
-    db.Parts.findOne({
+    db.Extras.findOne({
         where: {
             id: req.params.id
         }
-    }).then(part => {
-        if (loggedInUser.id === part.UserId) {
-            db.Parts.destroy({
+    }).then(data => {
+        if (loggedInUser.id === data.UserId) {
+            db.Extras.destroy({
                 where: {
-                    id: part.id
+                    id: data.id
                 }
-            }).then(delPart => {
-                res.json(delPart)
+            }).then(extraDelete => {
+                res.json(extraDelete)
             }).catch(err => {
                 console.log(err)
-                res.status(500).send("Unable to find keeb")
+                res.status(500).send("Unable to find keyset")
             })
         } else {
-            return res.status(401).send("Not your keeb!")
+            return res.status(401).send("Not your profile!")
         }
     })
 })
-
 module.exports = router;

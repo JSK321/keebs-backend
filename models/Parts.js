@@ -1,5 +1,3 @@
-const { sequelize } = require("../models")
-
 module.exports = function (sequelize, DataTypes) {
     var Parts = sequelize.define('Parts', {
         switches: DataTypes.STRING,
@@ -25,7 +23,7 @@ module.exports = function (sequelize, DataTypes) {
             type: DataTypes.STRING,
             allowNull: true,
         }
-    })
+    });
   
     Parts.associate = function(models){
         Parts.belongsTo(models.Keebs)

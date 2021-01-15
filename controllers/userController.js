@@ -151,10 +151,15 @@ router.get("/secretProfile", (req, res) => {
         where: {
             id: loggedInUser.id
         },
-        include: [{
-            model: db.Keebs,
-            include: [db.Parts]
-        }]
+        include: [
+            {
+                model: db.Keebs,
+                include: [db.Parts]
+            },
+            {
+                model: db.Extras
+            }
+        ]
     }).then(dbUser => {
         res.json(dbUser)
     }).catch(err => {
