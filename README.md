@@ -8,6 +8,9 @@ This is the back-end server side for the mykeebs-react application found here at
 ## React-Application
 View the application at https://mykeebs-react.herokuapp.com
 
+## Screenshot
+![Code index](https://i.imgur.com/EeuCW82.png)
+
 ## Installation
 NPM packages cloudinary, bcrypt, cors, dotenv, express, jsonwebtoken, mysql2, and sequelize are required to run the application.
 

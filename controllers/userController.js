@@ -8,7 +8,6 @@ const checkAuthStatus = request => {
     if (!request.headers.authorization) {
         return false
     }
-    // splits the Bearer token into an array, get token by getting index of 1
     const token = request.headers.authorization.split(" ")[1]
 
     const loggedInUser = jwt.verify(token, process.env.JWT_SECRET, (err, data) => {
