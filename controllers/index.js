@@ -5,6 +5,7 @@ const userRoutes = require('./userController');
 const keebRoutes = require('./keebController');
 const partsRoutes = require('./partsController');
 const extrasRoutes = require('./extrasController');
+const keebPhotosRoutes = require('./keebPhotosController');
 
 router.get("/", (req, res) => {
     res.send("My Keebs")
@@ -15,5 +16,6 @@ router.use("/api/users", userRoutes);
 router.use("/api/keebs", keebRoutes);
 router.use("/api/parts", partsRoutes);
 router.use("/api/extras", extrasRoutes);
+router.use("/api/keebPhotos", keebPhotosRoutes);
 
 module.exports = router;

@@ -23,7 +23,7 @@ const checkAuthStatus = request => {
 
 router.get("/", (req, res) => {
     db.Keebs.findAll({
-        include:[db.Parts]
+        include: [db.Parts, db.KeebPhotos]
     }).then(keebs => {
         res.json(keebs)
     }).catch(err => {
@@ -37,9 +37,23 @@ router.get("/:id", (req, res) => {
         where: {
             id: req.params.id
         },
-        include:[db.Parts]
+        include: [db.Parts]
     }).then(dbKeeb => {
         res.json(dbKeeb)
+    }).catch(err => {
+        console.log(err)
+        res.status(500).send("Unable to find keebs")
+    })
+})
+
+router.get("/keeb/:name", (req, res) => {
+    db.Keebs.findOne({
+        where: {
+            name: req.params.name
+        },
+        include: [db.Parts]
+    }).then(keeb => {
+        res.json(keeb)
     }).catch(err => {
         console.log(err)
         res.status(500).send("Unable to find keebs")
@@ -53,7 +67,6 @@ router.post("/", (req, res) => {
     }
     db.Keebs.create({
         name: req.body.name,
-        size: req.body.size,
         maker: req.body.maker,
         case: req.body.case,
         color: req.body.color,
@@ -78,28 +91,57 @@ router.put("/:id", (req, res) => {
         where: {
             id: req.params.id
         }
-    }).then(keeb=> {
-        if(loggedInUser.id === keeb.UserId){
+    }).then(keeb => {
+        if (loggedInUser.id === keeb.UserId) {
             db.Keebs.update({
                 name: req.body.name,
-                size: req.body.size,
                 maker: req.body.maker,
                 case: req.body.case,
                 color: req.body.color,
                 plate: req.body.plate,
                 angle: req.body.angle,
-                keebImage: req.body.keebImage
+                keebImage: req.body.keebImage,
             },
-            {
-                where: {
-                    id: keeb.id
-                }
-            }).then(editKeeb=> {
-                res.json(editKeeb)
-            }).catch(err => {
-                console.log(err)
-                res.status(500).send("Unable to find keeb")
-            })
+                {
+                    where: {
+                        id: keeb.id
+                    }
+                }).then(editKeeb => {
+                    res.json(editKeeb)
+                }).catch(err => {
+                    console.log(err)
+                    res.status(500).send("Unable to find keeb")
+                })
+        } else {
+            return res.status(401).send("Not your keeb!")
+        }
+    })
+})
+
+router.put('/sound/:id', (req, res) => {
+    const loggedInUser = checkAuthStatus(req);
+    if (!loggedInUser) {
+        return res.status(401).send("Please login first,")
+    }
+    db.Keebs.findOne({
+        where: {
+            id: req.params.id
+        }
+    }).then(keeb => {
+        if (loggedInUser.id === keeb.UserId) {
+            db.Keebs.update({
+                keebSoundTest: req.body.keebSoundTest
+            },
+                {
+                    where: {
+                        id: keeb.id
+                    }
+                }).then(editKeeb => {
+                    res.json(editKeeb)
+                }).catch(err => {
+                    console.log(err)
+                    res.status(500).send("Unable to find keeb")
+                })
         } else {
             return res.status(401).send("Not your keeb!")
         }
@@ -129,13 +171,13 @@ router.delete("/:id", (req, res) => {
         where: {
             id: req.params.id
         }
-    }).then(keeb=> {
-        if(loggedInUser.id === keeb.UserId){
+    }).then(keeb => {
+        if (loggedInUser.id === keeb.UserId) {
             db.Keebs.destroy({
                 where: {
                     id: keeb.id
                 }
-            }).then(delKeeb=> {
+            }).then(delKeeb => {
                 res.json(delKeeb)
             }).catch(err => {
                 console.log(err)
